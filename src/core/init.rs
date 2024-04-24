@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 use eyre::Result;
 
 use crate::core::err::InitError;
-use crate::colors::{BOLD, C_RESET, GREEN};
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN};
 use crate::daemon::system::OpenDaemon;
 
 #[derive(Default)]
@@ -51,10 +51,22 @@ impl OpenInit {
 
         self.generate_pid_file(1)?;
 
+        let version = match std::fs::read_to_string("/proc/version") {
+            Ok(content) => {
+                let parts: Vec<&str> = content.trim().split(' ').collect();
+
+                match parts.get(2) {
+                    Some(part) => part.to_string(),
+                    None => String::new()
+                }
+            },
+            Err(_) => String::new()
+        };
+
+        println!("{BOLD}{GREEN}*{C_RESET} OpenInit is starting Linux {GRAY}{BOLD}{version}{C_RESET}\n");
+
         self.daemon.configure()?;
         self.daemon.start()?;
-
-        println!("{:?}", self.daemon.services);
 
         Ok(())
     }
