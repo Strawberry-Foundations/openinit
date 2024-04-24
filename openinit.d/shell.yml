@@ -1,0 +1,6 @@
+service:
+  name: shell
+  description: Start shell
+  level: top
+
+  command: while true; do echo "Hi"; done

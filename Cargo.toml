@@ -1,0 +1,20 @@
+[package]
+name = "initd"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0.198", features = ["derive"] }
+serde_yaml = "0.9.34"
+
+eyre = "0.6.12"
+thiserror = "1.0.59"
+subprocess = "0.2.9"
+libc = "0.2.153"
+
+[profile.release]
+opt-level = 'z'
+strip = true
+lto = true

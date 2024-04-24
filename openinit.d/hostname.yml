@@ -1,0 +1,6 @@
+service:
+  name: hostname
+  description: Setup hostname
+  level: top
+
+  command: hostname -F /etc/hostname && sleep 5
