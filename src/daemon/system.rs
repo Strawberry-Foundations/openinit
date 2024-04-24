@@ -63,11 +63,14 @@ impl OpenDaemon {
                     Ok(res) => { res }
                     Err(_) => {
                         eprintln!(
-                            "[{BOLD}{RED}   Fail  {C_RESET}]  Invalid command for service {}",
+                            "[{BOLD}{RED}  Fail   {C_RESET}]  Invalid command for service {}",
                             service.service.name
                         );
                         
-                        Command::new("").spawn().unwrap()
+                        Command::new("").spawn().unwrap_or_else(|err| {
+                            println!("{err}");
+                            std::process::exit(1);
+                        })
                     }
                 };
 
