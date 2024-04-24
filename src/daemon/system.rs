@@ -62,15 +62,13 @@ impl OpenDaemon {
                     .spawn() {
                     Ok(res) => { res }
                     Err(_) => {
+                        delete_last_line();
                         eprintln!(
-                            "[{BOLD}{RED}  Fail   {C_RESET}]  Invalid command for service {}",
+                            "[{BOLD}{RED}  Fail   {C_RESET}]  Failed to start service {}",
                             service.service.name
                         );
-                        
-                        Command::new("").spawn().unwrap_or_else(|err| {
-                            println!("{err}");
-                            std::process::exit(1);
-                        })
+
+                        continue;
                     }
                 };
 
@@ -82,25 +80,12 @@ impl OpenDaemon {
                     service.service.name, service.service.description
                 );
             } else {
+                delete_last_line();
                 println!(
-                    "[{BOLD}{RED}   Fail  {C_RESET}]  Invalid command for service {}",
+                    "[{BOLD}{RED}   Fail  {C_RESET}]  Failed to start service {}",
                     service.service.name
                 );
             }
-    /*
-            use std::process::{Command, Stdio};
-
-            let mut child = Command::new("sh")
-                .arg("-c")
-                .arg("sleep 5 && echo Hello from child process")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("failed to execute command");
-
-            // Auf das Beenden des Child-Prozesses warten
-            let output = child.wait().expect("failed to wait on child");
-
-            println!("Child process exited with: {:?}", output); */
         }
         Ok(())
     }
