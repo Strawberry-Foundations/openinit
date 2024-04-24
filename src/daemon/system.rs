@@ -5,7 +5,7 @@ use crate::daemon::service::OpenService;
 use crate::core::err::InitError;
 use crate::util::delete_last_line;
 
-use crate::colors::{BOLD, C_RESET, GREEN, RED, YELLOW};
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RED, RESET, YELLOW};
 
 #[derive(Default)]
 pub struct OpenDaemon {
@@ -47,7 +47,7 @@ impl OpenDaemon {
     pub fn start(&mut self) -> Result<(), InitError> {
         for service in &self.services {
             println!(
-                "[{BOLD}{YELLOW} Startup {C_RESET}]  Starting service {} - {}",
+                "[{BOLD}{YELLOW} Startup {C_RESET}]  Starting service {GRAY}{}{RESET} - {GRAY}{}{RESET}",
                 service.service.name, service.service.description
             );
 
@@ -64,7 +64,7 @@ impl OpenDaemon {
                     Err(_) => {
                         delete_last_line();
                         eprintln!(
-                            "[{BOLD}{RED}  Fail   {C_RESET}]  Failed to start service {}",
+                            "[{BOLD}{RED}  Fail   {C_RESET}]  Failed to start service {GRAY}{}{RESET}",
                             service.service.name
                         );
 
@@ -76,13 +76,13 @@ impl OpenDaemon {
 
                 delete_last_line();
                 println!(
-                    "[{BOLD}{GREEN} Service {C_RESET}]  Started service {} - {}",
+                    "[{BOLD}{GREEN} Service {C_RESET}]  Started service {GRAY}{}{RESET} - {GRAY}{}{RESET}",
                     service.service.name, service.service.description
                 );
             } else {
                 delete_last_line();
                 println!(
-                    "[{BOLD}{RED}   Fail  {C_RESET}]  Failed to start service {}",
+                    "[{BOLD}{RED}   Fail  {C_RESET}]  Failed to start service {GRAY}{}{RESET}",
                     service.service.name
                 );
             }
