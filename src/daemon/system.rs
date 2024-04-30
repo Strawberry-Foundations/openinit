@@ -57,7 +57,7 @@ impl OpenDaemon {
 
                 if target.post == PostTarget::Loop {
                     let (tx, rx) = mpsc::channel::<bool>();
-                    
+
                     let cmd = cmd.clone();
                     let args_cloned = args.to_owned().clone();
                     let service_cloned = service.clone();
@@ -74,13 +74,12 @@ impl OpenDaemon {
                             }
                             Err(_) => {
                                 tx.send(false).unwrap();
-                                
+
                                 Command::new("false").spawn().unwrap()
-                                
                             }
                         }
                     });
-                    
+
                     match rx.recv().unwrap() {
                         true => {
                             match handle {
@@ -101,11 +100,11 @@ impl OpenDaemon {
                     };
                 }
                 else {
-                    let mut child = match Command::new(cmd)
+                    let child = match Command::new(cmd)
                         .args(args)
                         .stdout(Stdio::null())
                         .stderr(Stdio::piped())
-                        .spawn() {
+                        .status() {
                         Ok(res) => { res }
                         Err(_) => {
                             delete_last_line();
@@ -115,7 +114,12 @@ impl OpenDaemon {
                         }
                     };
 
-                    let _ = child.wait().unwrap();
+                    if child.code().unwrap() == 1 {
+                        delete_last_line();
+                        log_fail(service);
+                        
+                        continue;
+                    }
 
                     delete_last_line();
                     log_success(service);
