@@ -2,5 +2,6 @@ service:
   name: hostname
   description: Setup hostname
   level: top
+  target: boot:setup
 
-  command: hostname -F /etc/hostname && sleep 5
+  command: hostname -F /etc/hostname

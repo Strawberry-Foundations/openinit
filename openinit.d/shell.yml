@@ -1,6 +1,7 @@
 service:
-  name: shell
-  description: Start shell
+  name: write
+  description: Writes something to /testfile
   level: top
+  target: boot:setup
 
-  command: while true; do echo "Hi"; done
+  command: /scripts/write

@@ -9,6 +9,7 @@ pub struct OpenService {
 pub struct Service {
     pub name: String,
     pub description: String,
+    pub target: String,
     pub level: String,
     pub command: String,
 }

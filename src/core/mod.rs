@@ -1,4 +1,5 @@
 pub mod init;
 pub mod err;
 pub mod log;
-mod config;
+pub mod config;
+pub mod target;

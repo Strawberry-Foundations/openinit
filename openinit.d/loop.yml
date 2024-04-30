@@ -1,0 +1,7 @@
+service:
+  name: loop
+  description: openinit testing
+  level: top
+  target: boot:loop
+
+  command: /scripts/loop
