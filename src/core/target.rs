@@ -1,6 +1,6 @@
 use crate::daemon::service::OpenService;
 
-#[derive(Default, Eq, PartialEq, Copy, Clone)]
+#[derive(Default, Eq, PartialEq, Copy, Clone, Debug)]
 pub enum PreTarget {
     Boot,
     Post,
@@ -8,7 +8,7 @@ pub enum PreTarget {
     None,
 }
 
-#[derive(Default, Eq, PartialEq, Copy, Clone)]
+#[derive(Default, Eq, PartialEq, Copy, Clone, Debug)]
 pub enum PostTarget {
     Setup,
     Loop,
@@ -16,6 +16,7 @@ pub enum PostTarget {
     None,
 }
 
+#[derive(Default, Copy, Clone, Debug)]
 pub struct Target {
     pub pre: PreTarget,
     pub post: PostTarget
