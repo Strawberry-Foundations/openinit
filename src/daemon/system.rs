@@ -1,6 +1,5 @@
 use std::process::{Command, Stdio};
 use std::sync::mpsc;
-use std::thread::spawn;
 use eyre::Result;
 
 use crate::daemon::service::OpenService;
@@ -51,24 +50,26 @@ impl OpenDaemon {
         for service in &self.services {
             log_startup(service);
 
-            let command: Vec<&str> = service.service.command.split_whitespace().collect();
+            let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
             if let Some((cmd, args)) = command.split_first() {
                 let target = Target::new(service);
                 
                 if target.post == PostTarget::Loop {
-                    let cmd = cmd.to_string();
-                    let cmd_clone = cmd.as_str().to_owned();
+                    let (tx, rx) = mpsc::channel::<bool>();
                     
+                    let cmd = cmd.clone();
+                    
+                    let args_cloned = args.to_owned().clone();
+
                     let handle = std::thread::Builder::new().name("service_thread".to_string()).spawn(move || {
-                        match Command::new(cmd_clone)
-                            .args(["&b"])
+                        match Command::new(cmd)
+                            .args(args_cloned)
                             .stdout(Stdio::null())
                             .stderr(Stdio::piped())
                             .spawn() {
                             Ok(res) => { res }
                             Err(_) => {
-                                // Handle error
                                 delete_last_line();
                                 Command::new("false").spawn().unwrap()
                             }
@@ -100,9 +101,9 @@ impl OpenDaemon {
                             continue;
                         }
                     };
-                    
+
                     let _ = child.wait().unwrap();
-                    
+
                     delete_last_line();
                     log_success(service);
                 }
