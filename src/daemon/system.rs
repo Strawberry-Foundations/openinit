@@ -54,13 +54,13 @@ impl OpenDaemon {
 
             if let Some((cmd, args)) = command.split_first() {
                 let target = Target::new(service);
-                
+
                 if target.post == PostTarget::Loop {
                     let (tx, rx) = mpsc::channel::<bool>();
                     
                     let cmd = cmd.clone();
-                    
                     let args_cloned = args.to_owned().clone();
+                    let service_cloned = service.clone();
 
                     let handle = std::thread::Builder::new().name("service_thread".to_string()).spawn(move || {
                         match Command::new(cmd)
@@ -68,24 +68,37 @@ impl OpenDaemon {
                             .stdout(Stdio::null())
                             .stderr(Stdio::piped())
                             .spawn() {
-                            Ok(res) => { res }
+                            Ok(res) => {
+                                tx.send(true).unwrap();
+                                res
+                            }
                             Err(_) => {
-                                delete_last_line();
+                                tx.send(false).unwrap();
+                                
                                 Command::new("false").spawn().unwrap()
+                                
                             }
                         }
                     });
-
-                    match handle {
-                        Ok(_) => {
+                    
+                    match rx.recv().unwrap() {
+                        true => {
+                            match handle {
+                                Ok(_) => {
+                                    delete_last_line();
+                                    log_success(service);
+                                }
+                                Err(_) => {
+                                    delete_last_line();
+                                    log_fail(service);
+                                }
+                            }
+                        },
+                        false => {
                             delete_last_line();
-                            log_success(service);
+                            log_fail(&service_cloned);
                         }
-                        Err(_) => {
-                            delete_last_line();
-                            log_fail(service);
-                        }
-                    }
+                    };
                 }
                 else {
                     let mut child = match Command::new(cmd)

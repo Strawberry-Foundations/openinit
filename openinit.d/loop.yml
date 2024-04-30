@@ -1,6 +1,6 @@
 service:
   name: loop
-  description: openinit testing
+  description: OpenInit loop testing
   level: top
   target: boot:loop
 

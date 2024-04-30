@@ -26,7 +26,7 @@ impl Target {
     pub fn new(service: &OpenService) -> Self {
         let target: Vec<&str> = service.service.target.split(':').collect();
         
-        let (post, pre) = (target[0], target[1]);
+        let (pre, post) = (target[0], target[1]);
         
         let pre_target = match pre.to_lowercase().as_str() {
             "boot" => PreTarget::Boot,

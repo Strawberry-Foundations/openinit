@@ -1,0 +1,7 @@
+service:
+  name: error
+  description: OpenInit error testing
+  level: top
+  target: boot:setup
+
+  command: /scripts/error

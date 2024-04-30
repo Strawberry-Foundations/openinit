@@ -1,0 +1,7 @@
+service:
+  name: error-loop
+  description: OpenInit loop error testing
+  level: top
+  target: boot:loop
+
+  command: /scripts/error
