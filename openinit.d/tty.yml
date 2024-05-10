@@ -1,0 +1,7 @@
+service:
+  name: tty
+  description: Setup tty job control
+  level: top
+  target: boot:shell
+
+  command: setsid -c -w /bin/bash
