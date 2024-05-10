@@ -49,12 +49,17 @@ impl OpenDaemon {
 
     pub fn start(&mut self) -> Result<(), InitError> {
         for service in &self.services {
+            let target = Target::new(service);
+            if target.post == PostTarget::Shell {
+                continue
+            }
+            
             log_startup(service);
 
             let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
             if let Some((cmd, args)) = command.split_first() {
-                let target = Target::new(service);
+                
 
                 if target.post == PostTarget::Loop {
                     let (tx, rx) = mpsc::channel::<bool>();
@@ -101,10 +106,6 @@ impl OpenDaemon {
                     };
                 }
                 else {
-                    if target.post == PostTarget::Shell {
-                        continue
-                    }
-
                     let child = match Command::new(cmd)
                         .args(args)
                         .stdout(Stdio::null())
@@ -166,6 +167,7 @@ impl OpenDaemon {
                                 })
                         });
 
+                    delete_last_line();
                     log_success(service);
                     
                     let _ = child.wait();
