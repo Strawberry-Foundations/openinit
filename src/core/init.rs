@@ -1,11 +1,10 @@
 use std::fs::File;
 use std::io::Write;
-use std::process::{Command, Stdio};
 
 use eyre::Result;
 
 use crate::core::err::InitError;
-use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RESET};
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN};
 use crate::daemon::system::OpenDaemon;
 
 #[derive(Default)]
@@ -90,14 +89,7 @@ pub fn init() -> Result<()> {
 
 
 
-    println!("{BOLD}{GRAY}*{GREEN} Success{C_RESET}   Started service {GRAY}shell{RESET} - {GRAY}System shell{RESET}", );
-    let mut child = Command::new("/bin/sh")
-        .stdin(Stdio::inherit())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .spawn()?;
-
-    let _ = child.wait();
+    
 
     Ok(())
 }
