@@ -12,6 +12,7 @@ pub enum PreTarget {
 pub enum PostTarget {
     Setup,
     Loop,
+    Shell,
     #[default]
     None,
 }
@@ -37,6 +38,7 @@ impl Target {
         let post_target = match post.to_lowercase().as_str() {
             "setup" => PostTarget::Setup,
             "loop" => PostTarget::Loop,
+            "shell" => PostTarget::Shell,
             _ => PostTarget::None,
         };
         
