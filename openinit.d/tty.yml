@@ -4,4 +4,4 @@ service:
   level: top
   target: boot:shell
 
-  command: setsid -c -w /bin/bash
+  command: setsid -c -w /bin/login
