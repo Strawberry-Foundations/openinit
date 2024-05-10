@@ -5,9 +5,10 @@ use eyre::Result;
 use crate::daemon::service::OpenService;
 use crate::core::err::InitError;
 use crate::util::delete_last_line;
-
 use crate::core::log::{log_fail, log_startup, log_success};
 use crate::core::target::{PostTarget, Target};
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RESET};
+
 
 #[derive(Default)]
 pub struct OpenDaemon {
@@ -100,6 +101,10 @@ impl OpenDaemon {
                     };
                 }
                 else {
+                    if target.post == PostTarget::Shell {
+                        continue
+                    }
+
                     let child = match Command::new(cmd)
                         .args(args)
                         .stdout(Stdio::null())
@@ -129,6 +134,56 @@ impl OpenDaemon {
                 log_fail(service);
             }
         }
+
+        let result = &self.services.iter().find(|service| {
+            let target = Target::new(service);
+            target.post == PostTarget::Shell
+        });
+
+        match result {
+            Some(service) => {
+                log_startup(service);
+
+                let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
+
+                if let Some((cmd, args)) = command.split_first() {
+                    let mut child = Command::new(cmd)
+                        .args(args)
+                        .stdin(Stdio::inherit())
+                        .stdout(Stdio::inherit())
+                        .stderr(Stdio::inherit())
+                        .spawn()
+                        .unwrap_or_else(|_| { 
+                            log_fail(service);
+                            Command::new("/bin/sh")
+                                .stdin(Stdio::inherit())
+                                .stdout(Stdio::inherit())
+                                .stderr(Stdio::inherit())
+                                .spawn().
+                                unwrap_or_else(|_| { 
+                                    log_fail(service);
+                                    std::process::exit(1); 
+                                })
+                        });
+
+                    log_success(service);
+                    
+                    let _ = child.wait();
+                }
+            }
+            None => {
+                println!("{BOLD}{GRAY}*{GREEN} Success{C_RESET}   Started service {GRAY}shell{RESET} - {GRAY}System shell{RESET}", );
+                let mut child = Command::new("/bin/sh")
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit())
+                    .spawn().unwrap();
+
+                let _ = child.wait();
+            }
+        }
+
+
         Ok(())
     }
 }
