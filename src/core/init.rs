@@ -75,21 +75,3 @@ impl OpenInit {
         std::process::exit(1)
     }
 }
-
-pub fn init() -> Result<()> {
-    /* println!("[{BOLD}{GREEN} Service {C_RESET}]  Setting up hostname");
-    let mut child = Command::new("hostname")
-        .args(["-F", "/etc/hostname"])
-        .stdin(Stdio::inherit())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .spawn()?;
-
-    let _ = child.wait(); */
-
-
-
-    
-
-    Ok(())
-}
