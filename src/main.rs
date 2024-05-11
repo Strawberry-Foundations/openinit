@@ -2,8 +2,10 @@ use crate::core::init::OpenInit;
 use crate::core::err::InitError;
 use crate::daemon::system::OpenDaemon;
 use crate::sys::sysrq;
+use crate::sys::panic::panic;
 use crate::cli::args::{Args, Command};
 use crate::cli::help;
+
 use crate::colors::{BOLD, C_RESET, RED};
 
 mod colors;
@@ -27,7 +29,7 @@ fn main() {
         Command::Shutdown => {
             sysrq::sys_shutdown();
         },
-        Command::Panic => panic!("!!! Explicit kernel panic"),
+        Command::Panic => panic(),
         _ => {
             openinit.start(opendaemon).unwrap_or_else(|err| {
                 eprintln!("{RED}{BOLD}{err}{C_RESET}");
