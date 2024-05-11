@@ -62,7 +62,10 @@ impl OpenInit {
             Err(_) => String::new()
         };
 
-        println!("{BOLD}{GREEN}*{C_RESET} OpenInit is starting Linux {GRAY}{BOLD}{version}{C_RESET}\n");
+        println!(
+            "{BOLD}{GREEN}*{C_RESET} OpenInit ({}) is starting Linux {GRAY}{BOLD}{version}{C_RESET}\n",
+            env!("CARGO_PKG_VERSION")
+        );
 
         self.daemon.configure()?;
         self.daemon.start()?;
