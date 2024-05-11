@@ -9,6 +9,8 @@ use crate::cli::help;
 
 use crate::colors::{BOLD, C_RESET, RED};
 
+pub const CLEANUP_SCREEN: bool = false;
+
 mod colors;
 mod core;
 mod daemon;
