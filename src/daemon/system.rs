@@ -2,6 +2,7 @@ use std::io::{stdout, Write};
 use std::process::{Command, Stdio};
 use std::sync::mpsc;
 use std::thread::spawn;
+
 use eyre::Result;
 
 use crate::core::err::InitError;
