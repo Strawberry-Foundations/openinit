@@ -4,8 +4,8 @@ use std::io::Write;
 use eyre::Result;
 
 use crate::core::err::InitError;
-use crate::colors::{BOLD, C_RESET, GRAY, GREEN};
 use crate::daemon::system::OpenDaemon;
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN};
 
 #[derive(Default)]
 pub struct OpenInit {
