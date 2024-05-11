@@ -1,8 +1,9 @@
+#![allow(dead_code)]
+
 use crate::core::init::OpenInit;
 use crate::core::err::InitError;
 use crate::daemon::system::OpenDaemon;
 use crate::sys::sysrq;
-use crate::sys::panic::panic;
 use crate::cli::args::{Args, Command};
 use crate::cli::help;
 
