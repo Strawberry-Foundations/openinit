@@ -4,6 +4,7 @@ use std::sync::mpsc;
 use std::thread::spawn;
 
 use eyre::Result;
+use serde_yaml::Value;
 
 use crate::core::err::InitError;
 use crate::core::target::{PostTarget, Target};
