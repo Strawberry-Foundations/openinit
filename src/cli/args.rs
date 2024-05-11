@@ -3,7 +3,7 @@ pub struct Args {
     pub args: Vec<String>,
     pub command: Command,
     pub command_str: String,
-    
+
 }
 
 #[derive(Default)]
@@ -12,6 +12,8 @@ pub enum Command {
     None,
     Help,
     Reboot,
+    Panic,
+    Shutdown,
 }
 
 impl Args {
@@ -36,6 +38,8 @@ impl Args {
         match args.command_str.as_str() {
             "help" => args.command = Command::Help,
             "reboot" => args.command = Command::Reboot,
+            "shutdown" => args.command = Command::Shutdown,
+            "kill" | "panic" => args.command = Command::Panic,
             _ => args.command = Command::None,
         }
 
