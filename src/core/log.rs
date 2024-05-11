@@ -24,7 +24,7 @@ pub fn log_startup(service: &OpenService) {
 
 pub fn log_info(service: &OpenService, info_message: impl ToString) {
     println!(
-        "{BOLD}{GRAY}*{BLUE} Info   {C_RESET}   {GRAY}{}{RESET}: {GRAY}{}{RESET}",
+        "{BOLD}{GRAY}*{BLUE} Info   {C_RESET}   Info from {GRAY}{}{RESET} - {GRAY}{}{RESET}",
         service.service.name, info_message.to_string()
     );
 }
