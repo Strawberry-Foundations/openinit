@@ -26,7 +26,6 @@ impl OpenDaemon {
     }
 
     pub fn configure(&mut self) -> Result<(), InitError> {
-        // let service_folder = "./openinit.d";
         let service_folder = "/etc/openinit.d";
 
         let services = match std::fs::read_dir(service_folder) {
