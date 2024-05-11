@@ -1,12 +1,14 @@
+use std::io::{stdout, Write};
 use std::process::{Command, Stdio};
 use std::sync::mpsc;
+use std::thread::spawn;
 use eyre::Result;
 
-use crate::daemon::service::OpenService;
 use crate::core::err::InitError;
-use crate::util::delete_last_line;
-use crate::core::log::{log_fail, log_startup, log_success};
 use crate::core::target::{PostTarget, Target};
+use crate::core::log::{log_fail, log_startup, log_success};
+use crate::daemon::service::OpenService;
+use crate::util::{delete_last_line, get_os_name};
 use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RESET};
 
 
@@ -135,11 +137,26 @@ impl OpenDaemon {
             }
         }
 
-        
+        let service = &self.services.iter().find(|service| {
+            let target = Target::new(service);
+            target.post == PostTarget::Shell
+        }).unwrap();
+
+        log_startup(service);
+
         let shell_service = self.services.clone();
-        
-        std::thread::Builder::new().name("shell_thread".to_string()).spawn(move || {
+
+        println!(
+            "\nWelcome to {}\n",
+            get_os_name()
+        );
+
+        let tty_thread = spawn(move || {
             loop {
+                print!("{}[2J", 27 as char);
+                print!("{}[H", 27 as char);
+                stdout().flush().unwrap();
+                
                 let result = &shell_service.iter().find(|service| {
                     let target = Target::new(service);
                     target.post == PostTarget::Shell
@@ -147,8 +164,6 @@ impl OpenDaemon {
 
                 match result {
                     Some(service) => {
-                        log_startup(service);
-
                         let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
                         if let Some((cmd, args)) = command.split_first() {
@@ -171,9 +186,6 @@ impl OpenDaemon {
                                         })
                                 });
 
-                            delete_last_line();
-                            log_success(service);
-
                             let _ = child.wait();
                         }
                     }
@@ -189,7 +201,36 @@ impl OpenDaemon {
                     }
                 }
             }
-        }).unwrap();
+        }).join();
+
+        match tty_thread {
+            Ok(_) => {
+                delete_last_line();
+                log_success(service);
+            },
+            Err(_) => {
+                log_fail(service);
+                std::process::exit(1);
+            }
+        }
+
+        /*
+        let handle = std::thread::Builder::new().name("shell_thread".to_string()).spawn(move || {
+
+        });
+
+        match handle {
+            Ok(a) => {
+                delete_last_line();
+                dbg!("Ok");
+
+                println!("{:?}", a)
+            }
+            Err(_) => {
+                delete_last_line();
+                dbg!("Err");
+            }
+        } */
 
 
         Ok(())
