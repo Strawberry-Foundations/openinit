@@ -1,5 +1,5 @@
-use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RED, RESET, YELLOW};
 use crate::daemon::service::OpenService;
+use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RED, RESET, YELLOW};
 
 pub fn log_fail(service: &OpenService) {
     println!(
