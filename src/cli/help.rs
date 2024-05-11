@@ -6,6 +6,7 @@ pub fn help() {
 {GREEN}{BOLD}Usage:{RESET} {WHITE}openinit {CYAN}[command] {RED}[<options>]{C_RESET}\n\n\
 {MAGENTA}{BOLD}Commands:{C_RESET}
     {CYAN}{BOLD}help:{C_RESET} Prints this message
+    {CYAN}{BOLD}reboot:{C_RESET} Reboots the system
 
 ", env!("CARGO_PKG_VERSION"));
     std::process::exit(0);
