@@ -3,5 +3,5 @@ service:
   description: Setup tty job control
   level: top
   target: boot:shell
-
+  info: OpenInit shell startup is in beta stage
   command: setsid -c -w /bin/login
