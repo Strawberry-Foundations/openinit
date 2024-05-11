@@ -7,12 +7,14 @@ pub fn help() {
 {MAGENTA}{BOLD}Commands:{C_RESET}
     {CYAN}{BOLD}help:{C_RESET} Prints this message
     {CYAN}{BOLD}reboot:{C_RESET} Reboots the system
+    {CYAN}{BOLD}shutdown:{C_RESET} Shuts down the system
+    {CYAN}{BOLD}panic, kill:{C_RESET} panics the system
 
 ", env!("CARGO_PKG_VERSION"));
     std::process::exit(0);
 }
 
-/* 
+/*
     {CYAN}{BOLD}local <port>:{C_RESET} Starts a local proxy to the remote server
      {BOLD}↳ {MAGENTA}Options:{C_RESET}
             {CYAN}{BOLD}-u, --use <server>{C_RESET}      Select your target server for tunneling your traffic
