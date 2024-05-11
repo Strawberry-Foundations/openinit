@@ -29,7 +29,7 @@ fn main() {
         Command::Shutdown => {
             sysrq::sys_shutdown();
         },
-        Command::Panic => panic(),
+        Command::Panic => println!("Not implemented"),
         _ => {
             openinit.start(opendaemon).unwrap_or_else(|err| {
                 eprintln!("{RED}{BOLD}{err}{C_RESET}");
