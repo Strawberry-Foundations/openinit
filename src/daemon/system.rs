@@ -59,7 +59,7 @@ impl OpenDaemon {
             }
             
             log_startup(service);
-            
+
             if let Some(info) = &service.service.info {
                 log_info(service, info)
             }
@@ -147,6 +147,10 @@ impl OpenDaemon {
             target.post == PostTarget::Shell
         }).unwrap();
 
+        if let Some(info) = &service.service.info {
+            log_info(service, info)
+        }
+
         log_startup(service);
 
         let shell_service = self.services.clone();
@@ -158,7 +162,7 @@ impl OpenDaemon {
                     print!("{}[H", 27 as char);
                     stdout().flush().unwrap();
                 }
-                
+
                 println!(
                     "\nWelcome to {}\n",
                     get_os_name()
