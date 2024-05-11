@@ -50,6 +50,7 @@ impl OpenDaemon {
     pub fn start(&mut self) -> Result<(), InitError> {
         for service in &self.services {
             let target = Target::new(service);
+
             if target.post == PostTarget::Shell {
                 continue
             }
@@ -59,8 +60,6 @@ impl OpenDaemon {
             let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
             if let Some((cmd, args)) = command.split_first() {
-                
-
                 if target.post == PostTarget::Loop {
                     let (tx, rx) = mpsc::channel::<bool>();
 
@@ -136,54 +135,61 @@ impl OpenDaemon {
             }
         }
 
-        let result = &self.services.iter().find(|service| {
-            let target = Target::new(service);
-            target.post == PostTarget::Shell
-        });
+        
+        let shell_service = self.services.clone();
+        
+        std::thread::Builder::new().name("shell_thread".to_string()).spawn(move || {
+            loop {
+                let result = &shell_service.iter().find(|service| {
+                    let target = Target::new(service);
+                    target.post == PostTarget::Shell
+                });
 
-        match result {
-            Some(service) => {
-                log_startup(service);
+                match result {
+                    Some(service) => {
+                        log_startup(service);
 
-                let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
+                        let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
-                if let Some((cmd, args)) = command.split_first() {
-                    let mut child = Command::new(cmd)
-                        .args(args)
-                        .stdin(Stdio::inherit())
-                        .stdout(Stdio::inherit())
-                        .stderr(Stdio::inherit())
-                        .spawn()
-                        .unwrap_or_else(|_| { 
-                            log_fail(service);
-                            Command::new("/bin/sh")
+                        if let Some((cmd, args)) = command.split_first() {
+                            let mut child = Command::new(cmd)
+                                .args(args)
                                 .stdin(Stdio::inherit())
                                 .stdout(Stdio::inherit())
                                 .stderr(Stdio::inherit())
-                                .spawn().
-                                unwrap_or_else(|_| { 
+                                .spawn()
+                                .unwrap_or_else(|_| {
                                     log_fail(service);
-                                    std::process::exit(1); 
-                                })
-                        });
+                                    Command::new("/bin/sh")
+                                        .stdin(Stdio::inherit())
+                                        .stdout(Stdio::inherit())
+                                        .stderr(Stdio::inherit())
+                                        .spawn().
+                                        unwrap_or_else(|_| {
+                                            log_fail(service);
+                                            std::process::exit(1);
+                                        })
+                                });
 
-                    delete_last_line();
-                    log_success(service);
-                    
-                    let _ = child.wait();
+                            delete_last_line();
+                            log_success(service);
+
+                            let _ = child.wait();
+                        }
+                    }
+                    None => {
+                        println!("{BOLD}{GRAY}*{GREEN} Success{C_RESET}   Started service {GRAY}shell{RESET} - {GRAY}System shell{RESET}", );
+                        let mut child = Command::new("/bin/sh")
+                            .stdin(Stdio::inherit())
+                            .stdout(Stdio::inherit())
+                            .stderr(Stdio::inherit())
+                            .spawn().unwrap();
+
+                        let _ = child.wait();
+                    }
                 }
             }
-            None => {
-                println!("{BOLD}{GRAY}*{GREEN} Success{C_RESET}   Started service {GRAY}shell{RESET} - {GRAY}System shell{RESET}", );
-                let mut child = Command::new("/bin/sh")
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
-                    .spawn().unwrap();
-
-                let _ = child.wait();
-            }
-        }
+        }).unwrap();
 
 
         Ok(())
