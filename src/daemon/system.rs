@@ -146,16 +146,16 @@ impl OpenDaemon {
 
         let shell_service = self.services.clone();
 
-        println!(
-            "\nWelcome to {}\n",
-            get_os_name()
-        );
-
         let tty_thread = spawn(move || {
             loop {
                 print!("{}[2J", 27 as char);
                 print!("{}[H", 27 as char);
                 stdout().flush().unwrap();
+
+                println!(
+                    "\nWelcome to {}\n",
+                    get_os_name()
+                );
                 
                 let result = &shell_service.iter().find(|service| {
                     let target = Target::new(service);
