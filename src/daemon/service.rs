@@ -12,4 +12,5 @@ pub struct Service {
     pub target: String,
     pub level: String,
     pub command: String,
+    pub info: Option<String>,
 }
