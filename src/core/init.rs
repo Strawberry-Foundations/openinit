@@ -63,7 +63,7 @@ impl OpenInit {
         };
 
         println!(
-            "{BOLD}{GREEN}*{C_RESET} OpenInit ({}) is starting Linux {GRAY}{BOLD}{version}{C_RESET}\n",
+            "{BOLD}{GREEN}*{C_RESET} OpenInit {} is starting Linux {GRAY}{BOLD}{version}{C_RESET}\n",
             env!("CARGO_PKG_VERSION")
         );
 
