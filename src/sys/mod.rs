@@ -1,1 +1,1 @@
-pub mod reboot;
+pub mod sysrq;
