@@ -157,7 +157,7 @@ impl OpenDaemon {
                     "\nWelcome to {}\n",
                     get_os_name()
                 );
-                
+
                 let result = &shell_service.iter().find(|service| {
                     let target = Target::new(service);
                     target.post == PostTarget::Shell
