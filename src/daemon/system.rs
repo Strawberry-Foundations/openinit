@@ -149,15 +149,15 @@ impl OpenDaemon {
 
         let tty_thread = spawn(move || {
             loop {
-                print!("{}[2J", 27 as char);
+                /* print!("{}[2J", 27 as char);
                 print!("{}[H", 27 as char);
-                stdout().flush().unwrap();
+                stdout().flush().unwrap(); */
 
                 println!(
                     "\nWelcome to {}\n",
                     get_os_name()
                 );
-
+                
                 let result = &shell_service.iter().find(|service| {
                     let target = Target::new(service);
                     target.post == PostTarget::Shell
