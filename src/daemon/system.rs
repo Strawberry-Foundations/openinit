@@ -4,11 +4,11 @@ use std::sync::mpsc;
 use std::thread::spawn;
 
 use eyre::Result;
-use serde_yaml::Value;
+use crate::CLEANUP_SCREEN;
 
 use crate::core::err::InitError;
 use crate::core::target::{PostTarget, Target};
-use crate::core::log::{log_fail, log_startup, log_success};
+use crate::core::log::{log_fail, log_info, log_startup, log_success};
 use crate::daemon::service::OpenService;
 use crate::util::{delete_last_line, get_os_name};
 use crate::colors::{BOLD, C_RESET, GRAY, GREEN, RESET};
@@ -59,6 +59,10 @@ impl OpenDaemon {
             }
             
             log_startup(service);
+            
+            if let Some(info) = &service.service.info {
+                log_info(service, info)
+            }
 
             let command: Vec<String> = service.service.command.split_whitespace().map(String::from).collect();
 
@@ -149,15 +153,17 @@ impl OpenDaemon {
 
         let tty_thread = spawn(move || {
             loop {
-                /* print!("{}[2J", 27 as char);
-                print!("{}[H", 27 as char);
-                stdout().flush().unwrap(); */
-
+                if CLEANUP_SCREEN {
+                    print!("{}[2J", 27 as char);
+                    print!("{}[H", 27 as char);
+                    stdout().flush().unwrap();
+                }
+                
                 println!(
                     "\nWelcome to {}\n",
                     get_os_name()
                 );
-                
+
                 let result = &shell_service.iter().find(|service| {
                     let target = Target::new(service);
                     target.post == PostTarget::Shell
