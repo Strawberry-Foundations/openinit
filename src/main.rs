@@ -1,22 +1,22 @@
 #![allow(dead_code)]
 
-use crate::core::init::OpenInit;
-use crate::core::err::InitError;
-use crate::daemon::system::OpenDaemon;
-use crate::sys::sysrq;
 use crate::cli::args::{Args, Command};
 use crate::cli::help;
+use crate::core::err::InitError;
+use crate::core::init::OpenInit;
+use crate::daemon::system::OpenDaemon;
+use crate::sys::sysrq;
 
 use crate::colors::{BOLD, C_RESET, RED};
 
 pub const CLEANUP_SCREEN: bool = false;
 
+mod cli;
 mod colors;
 mod core;
 mod daemon;
-mod util;
 mod sys;
-mod cli;
+mod util;
 
 fn main() {
     let args = Args::collect();
@@ -26,12 +26,8 @@ fn main() {
 
     match args.command {
         Command::Help => help::help(),
-        Command::Reboot => {
-            sysrq::sys_reboot();
-        },
-        Command::Shutdown => {
-            sysrq::sys_shutdown();
-        },
+        Command::Reboot => sysrq::sys_reboot(),
+        Command::Shutdown => sysrq::sys_shutdown(),
         Command::Panic => println!("Not implemented"),
         _ => {
             openinit.start(opendaemon).unwrap_or_else(|err| {
